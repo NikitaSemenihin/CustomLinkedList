@@ -11,6 +11,7 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
     public CustomLinkedListImpl() {
     }
 
+
     public CustomLinkedListImpl(CustomLinkedList<? extends E> customLinkedList) {
         if (customLinkedList == null) {
             throw new CustomListEmptyException("The provided list is null");
@@ -18,15 +19,10 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
 
         int otherSize = customLinkedList.size();
         if (otherSize != 0) {
-
-            for (int i = 1; i <= otherSize; i++) {
+            for (int i = 0; i <= otherSize - 1; i++) {
                 add(i, customLinkedList.get(i));
             }
         }
-    }
-
-    private void addAll(int index, CustomLinkedList<? extends E> other) {
-
     }
 
 
@@ -36,8 +32,8 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
     }
 
     @Override
-    public void addFirst(E el) {
-        CustomNode<E> newNode = new CustomNode<>(el);
+    public void addFirst(E element) {
+        CustomNode<E> newNode = new CustomNode<>(element);
         if (this.firstNode == null) {
             addSingleFirstMode(newNode);
         } else {
@@ -49,20 +45,21 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
     }
 
     @Override
-    public void add(int index, E el) {
+    public void add(int index, E element) {
         checkIndexForAdd(index);
-        if (index == 1) {
-            addFirst(el);
-        } else if (index == size + 1) {
-            addLast(el);
+        if (index == 0) {
+            addFirst(element);
+        } else if (index == size) {
+            addLast(element);
         } else {
             CustomNode<E> currentNode = getNode(index);
-            CustomNode<E> newNode = new CustomNode<>(el);
+            CustomNode<E> prevNode = currentNode.getPrevious();
+            CustomNode<E> newNode = new CustomNode<>(element);
 
-            newNode.setPrevious(currentNode.getPrevious());
+            newNode.setPrevious(prevNode);
             newNode.setNext(currentNode);
 
-            newNode.getPrevious().setNext(newNode);
+            prevNode.setNext(newNode);
             currentNode.setPrevious(newNode);
 
             increaseSize();
@@ -70,9 +67,9 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
     }
 
     @Override
-    public void addLast(E el) {
-        CustomNode<E> newNode = new CustomNode<>(el);
-        if (this.firstNode == null) {
+    public void addLast(E element) {
+        CustomNode<E> newNode = new CustomNode<>(element);
+        if (this.lastNode == null) {
             addSingleFirstMode(newNode);
         } else {
             this.lastNode.setNext(newNode);
@@ -98,24 +95,24 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
         return getNodeValue(lastNode);
     }
 
-    @Override
-    public E get(int index) {
-        checkIndexForGetAndRemove(index);
-        if (index == 1) {
-            return firstNode.getValue();
-        } else if (index == this.size) {
-            return lastNode.getValue();
-        }
-
-        return getNode(index).getValue();
-    }
-
     private E getNodeValue(CustomNode<E> node) {
         if (node == null) {
             throw new CustomListEmptyException("List is empty");
         }
 
         return node.getValue();
+    }
+
+    @Override
+    public E get(int index) {
+        checkIndexForGetAndRemove(index);
+        if (index == 0) {
+            return firstNode.getValue();
+        } else if (index == this.size - 1) {
+            return lastNode.getValue();
+        }
+
+        return getNode(index).getValue();
     }
 
     @Override
@@ -153,14 +150,18 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
     @Override
     public void remove(int index) {
         checkIndexForGetAndRemove(index);
-        if (index == 1) {
+        if (index == 0) {
             removeFirst();
-        } else if (index == this.size) {
+        } else if (index == this.size - 1) {
             removeLast();
         } else {
-            CustomNode<E> prev = getNode(index - 1);
-            CustomNode<E> curr = prev.getNext();
-            prev.setNext(curr.getNext());
+            CustomNode<E> curr = getNode(index);
+            CustomNode<E> prev = curr.getPrevious();
+            CustomNode<E> next = curr.getNext();
+
+            prev.setNext(next);
+            next.setPrevious(prev);
+
             decreaseSize();
         }
     }
@@ -176,27 +177,28 @@ public class CustomLinkedListImpl<E> implements CustomLinkedList<E> {
     private CustomNode<E> getNode(int index) {
         if (index <= this.size / 2) {
             CustomNode<E> iteratorNode = firstNode;
-            for (int i = 1; i < index; i++) {
+            for (int i = 0; i < index; i++) {
                 iteratorNode = iteratorNode.getNext();
             }
             return iteratorNode;
         } else {
             CustomNode<E> iterNode = lastNode;
-            for (int i = size + 1; i > index; i--) {
+            for (int i = size; i > index; i--) {
                 iterNode = iterNode.getPrevious();
             }
             return iterNode;
         }
     }
 
+
     private void checkIndexForAdd(int index) {
-        if (index < 1 || index > size + 1) {
+        if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
     }
 
     private void checkIndexForGetAndRemove(int index) {
-        if (index < 1 || index > size) {
+        if (index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
     }

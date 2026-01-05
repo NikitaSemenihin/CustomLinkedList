@@ -50,7 +50,7 @@ class CustomLinkedListImplTest {
 
     @Test
     void addAtIndex_One_ShouldBehaveAsAddFirst() {
-        list.add(1, 100);
+        list.add(0, 100);
         assertEquals(100, list.getFirst());
     }
 
@@ -59,7 +59,7 @@ class CustomLinkedListImplTest {
     void addAtIndex_Size_ShouldBehaveAsAddLast() {
         list.addLast(1);
         list.addLast(2);
-        list.add(3, 3);
+        list.add(2, 3);
 
         assertEquals(3, list.getLast());
     }
@@ -94,10 +94,10 @@ class CustomLinkedListImplTest {
         list.addLast(2);
         list.addLast(3);
 
-        list.remove(2);
+        list.remove(1);
 
         assertEquals(2, list.size());
-        assertEquals(3, list.get(2));
+        assertEquals(3, list.get(1));
     }
 
     @Test
@@ -105,7 +105,7 @@ class CustomLinkedListImplTest {
         list.addLast(10);
         list.addLast(20);
 
-        assertEquals(20, list.get(2));
+        assertEquals(20, list.get(1));
     }
 
     @Test
@@ -133,7 +133,7 @@ class CustomLinkedListImplTest {
         list.addLast(2);
 
         assertEquals(4, list.size());
-        assertEquals(3, list.get(1));
-        assertEquals(4, list.get(2));
+        assertEquals(3, list.get(0));
+        assertEquals(4, list.get(1));
     }
 }
